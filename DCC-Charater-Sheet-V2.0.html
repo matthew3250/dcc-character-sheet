@@ -812,6 +812,27 @@
             min-width: 28px;
         }
     }
+
+    @media (max-width: 768px) {
+        /* Simplify Mobile Header Bar */
+        header {
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 8px;
+            margin-bottom: 15px;
+        }
+
+        /* Hide title and old desktop buttons on mobile to prevent wrapping/overflow bugs */
+        header h1, .io-buttons {
+            display: none !important;
+        }
+
+        /* Full-width action buttons inside the Save/Load view */
+        #sec-io button {
+            width: 100%;
+            box-sizing: border-box;
+        }
+    }
+
     </style>
 </head>
 <body>
@@ -863,6 +884,26 @@
     <form id="character-form" onsubmit="event.preventDefault();">
         
         <!-- PAGE 1: CRAWLER, ATTRIBUTES, DEFENSES & EXTERNAL BUFFS -->
+        <!-- DEDICATED SAVE / LOAD SECTION (DEFAULT MOBILE VIEW) -->
+        <div class="print-page" id="sec-io" style="display: none;">
+            <h2>DCC Character Management</h2>
+            <p style="font-size: 0.9rem; color: #aaa; margin-bottom: 20px;">
+                Load an existing character JSON file or save your current character configuration.
+            </p>
+
+            <div style="display: flex; flex-direction: column; gap: 15px; max-width: 400px; margin: 0 auto; padding: 20px 0;">
+                <button type="button" onclick="exportCharacter()" style="padding: 15px; font-size: 1rem;">
+                    💾 Save Character (JSON)
+                </button>
+
+                <div class="file-input-wrapper" style="width: 100%;">
+                    <button type="button" class="btn-file-input" style="width: 100%; padding: 15px; font-size: 1rem;">
+                        📂 Load Character (JSON)
+                    </button>
+                    <input type="file" id="file-loader-mobile" accept=".json" onchange="importCharacter(event)" style="width: 100%; height: 100%;" />
+                </div>
+            </div>
+        </div>
         <div class="print-page" id="page-1">
             <h2>Character Core Profile</h2>
 
@@ -1961,6 +2002,37 @@
             <td style="text-align:center;"><button type="button" style="background:#ea2027; padding: 6px 12px; width: 100%;" onclick="this.closest('tr').remove()">Delete Attack</button></td>
         `;
         tbody.appendChild(tr);
+    }
+    
+    // Initialize Default View on Page Load
+    window.addEventListener('DOMContentLoaded', () => {
+        const isMobile = window.innerWidth <= 768;
+        if (isMobile) {
+            // Default to Save/Load view on mobile screens
+            switchMobileSection('sec-io');
+        }
+    });
+
+    // Updated Mobile Section Switcher
+    function switchMobileSection(sectionId) {
+        // Hide all main pages, tab contents, and IO sections
+        document.querySelectorAll('.print-page, .tab-content').forEach(el => {
+            el.style.display = 'none';
+        });
+
+        // Show selected section
+        const target = document.getElementById(sectionId);
+        if (target) {
+            target.style.display = 'block';
+        }
+
+        // Close menu overlay if open
+        const drawer = document.getElementById('mobile-drawer');
+        const overlay = document.getElementById('mobile-drawer-overlay');
+        if (drawer && drawer.classList.contains('open')) {
+            drawer.classList.remove('open');
+            overlay.classList.remove('active');
+        }
     }
 </script>
 
