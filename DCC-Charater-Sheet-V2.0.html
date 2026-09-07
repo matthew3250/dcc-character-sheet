@@ -602,6 +602,84 @@
             .grid-layout-2col, .grid-layout-attacks, .bio-grid {
                 grid-template-columns: 1fr;
             }
+        /* --- INVENTORY MOBILE CARDS --- */
+            #inventory-table, #inventory-table tbody, #inventory-table tr, #inventory-table td {
+                display: block;
+                width: 100%;
+                box-sizing: border-box;
+            }
+
+            #inventory-table thead {
+                display: none; /* Hide table headers */
+            }
+
+            #inventory-table tr {
+                background: rgba(0, 0, 0, 0.25);
+                border: 1px solid var(--border-color);
+                border-radius: 6px;
+                padding: 10px;
+                margin-bottom: 12px;
+            }
+
+            #inventory-table td {
+                border: none;
+                padding: 4px 0;
+            }
+
+            #inventory-table td::before {
+                content: attr(data-label);
+                font-size: 0.75rem;
+                font-weight: bold;
+                color: var(--accent-color);
+                display: block;
+                margin-bottom: 2px;
+            }
+
+            /* --- SKILLS MOBILE CARDS --- */
+            #skills-table, #skills-table tbody, #skills-table tr, #skills-table td {
+                display: block;
+                width: 100%;
+                box-sizing: border-box;
+            }
+
+            #skills-table thead {
+                display: none; /* Hide table headers */
+            }
+
+            /* Group skill entry + skill notes into a single visually connected card */
+            #skills-table tr:not(.skill-notes-row) {
+                background: rgba(0, 0, 0, 0.25);
+                border: 1px solid var(--border-color);
+                border-bottom: none;
+                border-top-left-radius: 6px;
+                border-top-right-radius: 6px;
+                padding: 10px 10px 0 10px;
+                margin-top: 12px;
+            }
+
+            #skills-table tr.skill-notes-row {
+                background: rgba(0, 0, 0, 0.25);
+                border: 1px solid var(--border-color);
+                border-top: none;
+                border-bottom-left-radius: 6px;
+                border-bottom-right-radius: 6px;
+                padding: 0 10px 10px 10px;
+                margin-bottom: 12px;
+            }
+
+            #skills-table td {
+                border: none;
+                padding: 4px 0;
+            }
+
+            #skills-table td::before {
+                content: attr(data-label);
+                font-size: 0.75rem;
+                font-weight: bold;
+                color: var(--accent-color);
+                display: block;
+                margin-bottom: 2px;
+            }
         }
 
         /* Version Info Footer & Modal */
@@ -1491,37 +1569,33 @@
         tbody.appendChild(tr);
     }
 
-    function addSkillRow(data = {name: '', rank: '', stat: '', check: '', notes: ''}) {
+    // Dynamic Skill Row Generator
+    function addSkillRow(data = { name: '', rank: '', stat: '', check: '', notes: '' }) {
         const tbody = document.getElementById('skills-body');
         
-        // Main skill attributes row
-        const tr1 = document.createElement('tr');
-        tr1.innerHTML = `
-            <td><input type="text" class="skill-name" value="${data.name}"></td>
-            <td><input type="text" class="skill-rank" value="${data.rank}"></td>
-            <td><input type="text" class="skill-stat" value="${data.stat}"></td>
-            <td><input type="text" class="skill-check" value="${data.check}"></td>
+        // Main Skill Info Row
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td data-label="Skill Name"><input type="text" class="skill-name" value="${data.name || ''}"></td>
+            <td data-label="Rank"><input type="text" class="skill-rank" value="${data.rank || ''}"></td>
+            <td data-label="Stat Modifier"><input type="text" class="skill-stat" value="${data.stat || ''}"></td>
+            <td data-label="Check Total"><input type="text" class="skill-check" value="${data.check || ''}"></td>
             <td style="text-align:center;">
-                <button type="button" class="btn-toggle-notes" style="background:#252a31; color:var(--accent-color); border:1px solid var(--border-color); padding: 4px 8px; font-size:0.8rem;" onclick="toggleSkillNotes(this)">▼ Notes</button>
-            </td>
-            <td style="text-align:center;">
-                <button type="button" style="background:#ea2027; padding: 4px 8px;" onclick="removeSkillEntry(this)">X</button>
+                <button type="button" style="background:#ea2027; padding: 6px 12px; width: 100%; margin-top: 4px;" onclick="removeSkillRow(this)">Delete Skill</button>
             </td>
         `;
         
-        // Collapsible notes row (hidden by default)
-        const tr2 = document.createElement('tr');
-        tr2.className = 'skill-notes-row';
-        tr2.style.display = 'none'; // Hidden initially
-        tr2.innerHTML = `
-            <td colspan="6" style="padding: 6px 10px; background: rgba(0,0,0,0.2);">
-                <label style="font-size: 0.75rem; color: #aaa; display: block; margin-bottom: 2px;">Notes & Upgrades</label>
-                <textarea class="skill-notes" rows="3" style="width: 100%; resize: vertical;">${data.notes}</textarea>
+        // Skill Notes Row
+        const trNotes = document.createElement('tr');
+        trNotes.className = 'skill-notes-row';
+        trNotes.innerHTML = `
+            <td colspan="5" data-label="Skill Notes">
+                <input type="text" class="skill-notes" placeholder="Notes & Effects..." value="${data.notes || ''}">
             </td>
         `;
-        
-        tbody.appendChild(tr1);
-        tbody.appendChild(tr2);
+
+        tbody.appendChild(tr);
+        tbody.appendChild(trNotes);
     }
 
     // Toggle visibility of the notes row
@@ -1542,24 +1616,27 @@
         }
     }
 
-    // Remove both skill row and its associated notes row
-    function removeSkillEntry(button) {
-        const mainRow = button.closest('tr');
+    // Helper to cleanly remove both rows associated with a skill
+    function removeSkillRow(btn) {
+        const mainRow = btn.closest('tr');
         const notesRow = mainRow.nextElementSibling;
-        mainRow.remove();
         if (notesRow && notesRow.classList.contains('skill-notes-row')) {
             notesRow.remove();
         }
+        mainRow.remove();
     }
 
-    function addInventoryRow(data = {name: '', qty: '1', notes: ''}) {
+    // Dynamic Inventory Row Generator
+    function addInventoryRow(data = { name: '', qty: '', notes: '' }) {
         const tbody = document.getElementById('inventory-body');
         const tr = document.createElement('tr');
         tr.innerHTML = `
-            <td><input type="text" class="inv-name" value="${data.name}"></td>
-            <td><input type="text" class="inv-qty" value="${data.qty}"></td>
-            <td><input type="text" class="inv-notes" value="${data.notes}"></td>
-            <td style="text-align:center;"><button type="button" style="background:#ea2027; padding: 4px 8px;" onclick="this.closest('tr').remove()">X</button></td>
+            <td data-label="Item Name"><input type="text" class="inv-name" value="${data.name || ''}"></td>
+            <td data-label="Quantity"><input type="text" class="inv-qty" value="${data.qty || ''}"></td>
+            <td data-label="Notes"><input type="text" class="inv-notes" value="${data.notes || ''}"></td>
+            <td style="text-align:center;">
+                <button type="button" style="background:#ea2027; padding: 6px 12px; width: 100%; margin-top: 4px;" onclick="this.closest('tr').remove()">Delete Item</button>
+            </td>
         `;
         tbody.appendChild(tr);
     }
@@ -2003,7 +2080,7 @@
         `;
         tbody.appendChild(tr);
     }
-    
+
     // Initialize Default View on Page Load
     window.addEventListener('DOMContentLoaded', () => {
         const isMobile = window.innerWidth <= 768;
