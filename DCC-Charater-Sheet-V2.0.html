@@ -602,7 +602,94 @@
             .grid-layout-2col, .grid-layout-attacks, .bio-grid {
                 grid-template-columns: 1fr;
             }
-        /* --- INVENTORY MOBILE CARDS --- */
+
+            /* --- MOBILE MODAL OVERLAY STYLES --- */
+            .mobile-modal {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.75);
+                z-index: 20000;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                padding: 15px;
+                box-sizing: border-box;
+            }
+
+            .mobile-modal-content {
+                background: var(--panel-bg, #1a1a1a);
+                border: 2px solid var(--accent-color, #ff4757);
+                border-radius: 8px;
+                width: 100%;
+                max-width: 500px;
+                padding: 15px;
+                box-sizing: border-box;
+                display: flex;
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .mobile-modal-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .mobile-modal-header h3 {
+                margin: 0;
+                font-size: 1.1rem;
+                color: var(--text-color, #fff);
+            }
+
+            .modal-close-btn {
+                background: transparent;
+                border: none;
+                color: #aaa;
+                font-size: 1.4rem;
+                cursor: pointer;
+            }
+
+            #modal-skill-textarea {
+                width: 100%;
+                box-sizing: border-box;
+                background: #000;
+                color: #fff;
+                border: 1px solid var(--border-color, #444);
+                border-radius: 4px;
+                padding: 10px;
+                font-size: 1rem;
+                resize: vertical;
+            }
+
+            .modal-save-btn {
+                background: var(--accent-color, #ff4757);
+                color: white;
+                border: none;
+                padding: 12px;
+                border-radius: 4px;
+                font-size: 1rem;
+                font-weight: bold;
+                cursor: pointer;
+            }
+
+            /* --- MOBILE SPECIFIC OVERRIDES (<768px) --- */
+            @media (max-width: 768px) {
+                /* Hide desktop inline notes row on phone view */
+                #skills-table tr.skill-notes-row {
+                    display: none !important;
+                }
+
+                /* Clean mobile skill card borders */
+                #skills-table tr:not(.skill-notes-row) {
+                    border-bottom: 1px solid var(--border-color) !important;
+                    border-radius: 6px !important;
+                    margin-bottom: 12px;
+                }
+            }
+            /* --- INVENTORY MOBILE CARDS --- */
             #inventory-table, #inventory-table tbody, #inventory-table tr, #inventory-table td {
                 display: block;
                 width: 100%;
@@ -1434,9 +1521,15 @@
             <button type="button" class="modal-close-btn" onclick="closeVersionModal()">&times;</button>
             <h3 style="margin-top: 0; border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">Sheet Version Information</h3>
             
-            <p><strong>Version:</strong> v1.2.0</p>
+            <p><strong>Version:</strong> v2.0.0</p>
             <p><strong>Changelog:</strong></p>
             <ul style="padding-left: 20px; font-size: 0.9rem; line-height: 1.4;">
+                <li>
+                    <strong>v2.0.0</strong>
+                    <ol>
+                        <li>Updated UI for mobile devices.</li>
+                    </ol>
+                </li>
                 <li>
                     <strong>v1.2.0:</strong>
                     <ol>
@@ -1466,9 +1559,20 @@
                 <li>
                     <strong>v0.0.0:</strong> Draft, Built based upon released Character PDF.
                 </li>
-                
             </ul>
         </div>
+    </div>
+</div>
+
+<!-- MOBILE SKILL NOTES MODAL -->
+<div id="mobile-notes-modal" class="mobile-modal" style="display: none;">
+    <div class="mobile-modal-content">
+        <div class="mobile-modal-header">
+            <h3 id="modal-skill-title">Skill Notes</h3>
+            <button type="button" class="modal-close-btn" onclick="closeSkillNotesModal()">✕</button>
+        </div>
+        <textarea id="modal-skill-textarea" rows="8" placeholder="Type skill details, conditions, or rules here..."></textarea>
+        <button type="button" class="modal-save-btn" onclick="saveSkillNotesModal()">Done</button>
     </div>
 </div>
 
@@ -1569,23 +1673,31 @@
         tbody.appendChild(tr);
     }
 
-    // Dynamic Skill Row Generator
+    // Active skill row tracker for modal
+    let currentEditingNotesInput = null;
+
+    // Updated Dynamic Skill Row Generator
     function addSkillRow(data = { name: '', rank: '', stat: '', check: '', notes: '' }) {
         const tbody = document.getElementById('skills-body');
         
-        // Main Skill Info Row
+        // Main Skill Card Row
         const tr = document.createElement('tr');
         tr.innerHTML = `
             <td data-label="Skill Name"><input type="text" class="skill-name" value="${data.name || ''}"></td>
             <td data-label="Rank"><input type="text" class="skill-rank" value="${data.rank || ''}"></td>
             <td data-label="Stat Modifier"><input type="text" class="skill-stat" value="${data.stat || ''}"></td>
             <td data-label="Check Total"><input type="text" class="skill-check" value="${data.check || ''}"></td>
-            <td style="text-align:center;">
-                <button type="button" style="background:#ea2027; padding: 6px 12px; width: 100%; margin-top: 4px;" onclick="removeSkillRow(this)">Delete Skill</button>
+            <td data-label="Notes" style="text-align:center;">
+                <button type="button" class="btn-edit-notes" style="background:#2ed573; padding: 8px 12px; width: 100%; margin-bottom: 6px;" onclick="openSkillNotesModal(this)">
+                    📝 Edit Notes
+                </button>
+                <button type="button" style="background:#ea2027; padding: 8px 12px; width: 100%;" onclick="removeSkillRow(this)">
+                    Delete Skill
+                </button>
             </td>
         `;
         
-        // Skill Notes Row
+        // Hidden/Desktop Notes Row (Preserved for desktop views and JSON exports)
         const trNotes = document.createElement('tr');
         trNotes.className = 'skill-notes-row';
         trNotes.innerHTML = `
@@ -1596,6 +1708,40 @@
 
         tbody.appendChild(tr);
         tbody.appendChild(trNotes);
+    }
+
+    // Open Notes Modal
+    function openSkillNotesModal(btn) {
+        const mainRow = btn.closest('tr');
+        const skillNameInput = mainRow.querySelector('.skill-name');
+        const notesRow = mainRow.nextElementSibling;
+        const notesInput = notesRow ? notesRow.querySelector('.skill-notes') : null;
+
+        if (!notesInput) return;
+
+        currentEditingNotesInput = notesInput;
+        
+        // Populate Modal
+        const skillName = skillNameInput && skillNameInput.value ? skillNameInput.value : 'Skill';
+        document.getElementById('modal-skill-title').innerText = `${skillName} - Notes`;
+        document.getElementById('modal-skill-textarea').value = notesInput.value || '';
+        
+        // Display Modal
+        document.getElementById('mobile-notes-modal').style.display = 'flex';
+    }
+
+    // Save & Close Modal
+    function saveSkillNotesModal() {
+        if (currentEditingNotesInput) {
+            const modalText = document.getElementById('modal-skill-textarea').value;
+            currentEditingNotesInput.value = modalText;
+        }
+        closeSkillNotesModal();
+    }
+
+    function closeSkillNotesModal() {
+        document.getElementById('mobile-notes-modal').style.display = 'none';
+        currentEditingNotesInput = null;
     }
 
     // Toggle visibility of the notes row
