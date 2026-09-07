@@ -732,6 +732,120 @@
                 padding: 6px !important;
             }
 
+             /* Hide inline note rows in the primary skill table */
+            tr.skill-notes-row {
+                display: none !important;
+            }
+
+            /* Force the appendix table onto a new page at the end */
+            .skill-appendix-print {
+                display: block !important;
+                page-break-before: always !important;
+                break-before: page !important;
+            }
+
+            #skills-appendix-table {
+                width: 100%;
+                border-collapse: collapse;
+            }
+
+            #skills-appendix-table td {
+                border: 1px solid #000;
+                padding: 6px;
+                vertical-align: top;
+            }
+
+            /* Hide Action Columns in Main Skills Table */
+            #skills-table th:nth-child(5),
+            #skills-table th:nth-child(6),
+            #skills-table td.td-skill-note,
+            #skills-table td.td-skill-del {
+                display: none !important;
+            }
+
+            /* Force Main Skills Table to Display Horizontally */
+            #skills-table {
+                width: 100% !important;
+                border-collapse: collapse !important;
+                display: table !important;
+            }
+
+            #skills-table thead {
+                display: table-header-group !important;
+            }
+
+            #skills-table tbody {
+                display: table-row-group !important;
+            }
+
+            #skills-table tr:not(.skill-notes-row) {
+                display: table-row !important;
+                page-break-inside: avoid !important;
+            }
+
+            #skills-table td {
+                display: table-cell !important;
+                padding: 4px 6px !important;
+                vertical-align: middle !important;
+            }
+
+            /* Hide inline note rows on Page 1 completely */
+            tr.skill-notes-row {
+                display: none !important;
+            }
+
+            /* Appendix Page Styling */
+            .skill-appendix-print {
+                display: block !important;
+                page-break-before: always !important;
+                break-before: page !important;
+            }
+
+            #skills-appendix-table {
+                width: 100% !important;
+                border-collapse: collapse !important;
+            }
+
+            #skills-appendix-table td {
+                border: 1px solid #000 !important;
+                padding: 6px !important;
+                vertical-align: top !important;
+            }
+
+             /* Set column widths for the main skills table header and cells */
+            #skills-table th:nth-child(1),
+            #skills-table td:nth-child(1) {
+                width: 50% !important; /* Skill Name */
+            }
+
+            #skills-table th:nth-child(2),
+            #skills-table td:nth-child(2) {
+                width: 10% !important; /* Rank */
+                text-align: center !important;
+            }
+
+            #skills-table th:nth-child(3),
+            #skills-table td:nth-child(3) {
+                width: 20% !important; /* Stat Mod */
+                text-align: center !important;
+            }
+
+            #skills-table th:nth-child(4),
+            #skills-table td:nth-child(4) {
+                width: 20% !important; /* Check Total */
+                text-align: center !important;
+            }
+
+            /* Input adjustments to match exact column widths */
+            #skills-table input {
+                width: 100% !important;
+                box-sizing: border-box !important;
+            }
+        }  /* ------------------ of end @media print ------- */
+       
+        /* On screen editor mode */
+        .skill-appendix-print {
+            display: none;
         }
 
         .version-footer {
@@ -1131,6 +1245,15 @@
                 gap: 6px !important;
             }
         }
+
+        .stat-row-v2 {
+            display: grid;
+            grid-template-columns: 1.4fr 1fr 1fr 1fr 1fr;
+            gap: 6px;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+
     </style>
 </head>
 <body>
@@ -1298,7 +1421,7 @@
 
                 <div>
                     <h3>Attributes</h3>
-                    
+
                     <div class="mana-row-v2">
                         <div>
                             <label>Max Mana</label>
@@ -1309,42 +1432,48 @@
                             <input type="number" id="mana-current" name="mana_current" value="10">
                         </div>
                     </div>
-                    
-                    <div class="stat-row">
+
+                    <div class="stat-row-v2">
                         <span class="stat-header">Attribute</span>
                         <span class="stat-header">Base</span>
                         <span class="stat-header">Enh.</span>
+                        <span class="stat-header">Total</span>
                         <span class="stat-header">Mod</span>
                     </div>
 
-                    <div class="stat-row">
+                    <div class="stat-row-v2">
                         <label>Strength</label>
                         <input type="number" id="str-unenhanced" name="str_unenhanced" value="10" oninput="calculateModifier('str')">
-                        <input type="number" id="str-enhanced" name="str_enhanced" value="10" oninput="calculateModifier('str')">
+                        <input type="number" id="str-enhanced" name="str_enhanced" value="0" oninput="calculateModifier('str')">
+                        <input type="number" id="str-total" name="str_total" value="10" readonly>
                         <input type="number" id="str-mod" name="str_mod" value="0" readonly>
                     </div>
-                    <div class="stat-row">
+                    <div class="stat-row-v2">
                         <label>Intelligence</label>
                         <input type="number" id="int-unenhanced" name="int_unenhanced" value="10" oninput="calculateModifier('int')">
-                        <input type="number" id="int-enhanced" name="int_enhanced" value="10" oninput="calculateModifier('int')">
+                        <input type="number" id="int-enhanced" name="int_enhanced" value="0" oninput="calculateModifier('int')">
+                        <input type="number" id="int-total" name="int_total" value="10" readonly>
                         <input type="number" id="int-mod" name="int_mod" value="0" readonly>
                     </div>
-                    <div class="stat-row">
+                    <div class="stat-row-v2">
                         <label>Constitution</label>
                         <input type="number" id="con-unenhanced" name="con_unenhanced" value="10" oninput="calculateModifier('con')">
-                        <input type="number" id="con-enhanced" name="con_enhanced" value="10" oninput="calculateModifier('con')">
+                        <input type="number" id="con-enhanced" name="con_enhanced" value="0" oninput="calculateModifier('con')">
+                        <input type="number" id="con-total" name="con_total" value="10" readonly>
                         <input type="number" id="con-mod" name="con_mod" value="0" readonly>
                     </div>
-                    <div class="stat-row">
+                    <div class="stat-row-v2">
                         <label>Dexterity</label>
                         <input type="number" id="dex-unenhanced" name="dex_unenhanced" value="10" oninput="calculateModifier('dex')">
-                        <input type="number" id="dex-enhanced" name="dex_enhanced" value="10" oninput="calculateModifier('dex')">
+                        <input type="number" id="dex-enhanced" name="dex_enhanced" value="0" oninput="calculateModifier('dex')">
+                        <input type="number" id="dex-total" name="dex_total" value="10" readonly>
                         <input type="number" id="dex-mod" name="dex_mod" value="0" readonly>
                     </div>
-                    <div class="stat-row">
+                    <div class="stat-row-v2">
                         <label>Charisma</label>
                         <input type="number" id="cha-unenhanced" name="cha_unenhanced" value="10" oninput="calculateModifier('cha')">
-                        <input type="number" id="cha-enhanced" name="cha_enhanced" value="10" oninput="calculateModifier('cha')">
+                        <input type="number" id="cha-enhanced" name="cha_enhanced" value="0" oninput="calculateModifier('cha')">
+                        <input type="number" id="cha-total" name="cha_total" value="10" readonly>
                         <input type="number" id="cha-mod" name="cha_mod" value="0" readonly>
                     </div>
 
@@ -1640,9 +1769,17 @@
             <button type="button" class="modal-close-btn" onclick="closeVersionModal()">&times;</button>
             <h3 style="margin-top: 0; border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">Sheet Version Information</h3>
             
-            <p><strong>Version:</strong> v2.0.0</p>
+            <p><strong>Version:</strong> v2.1.0</p>
             <p><strong>Changelog:</strong></p>
             <ul style="padding-left: 20px; font-size: 0.9rem; line-height: 1.4;">
+                <li>
+                    <strong>v2.1.0:</strong>
+                    <ol>
+                        <li>The skill list now print in a table format.</li>
+                        <li>The Skill notes are printed at the end of the document.</li>
+                        <li>Attributes now add Base + Enhacements.</li>
+                    </ol>
+                </li>
                 <li>
                     <strong>v2.0.0:</strong>
                     <ol>
@@ -1697,6 +1834,24 @@
     </div>
 </div>
 
+
+<!-- APPENDIX: SKILL NOTES (Appears at the end of print) -->
+<div class="print-page skill-appendix-print">
+    <h2>Skill Notes & Details</h2>
+    <table id="skills-appendix-table">
+        <thead>
+            <tr>
+                <th style="width: 30%;">Skill Name</th>
+                <th style="width: 70%;">Notes & Rules</th>
+            </tr>
+        </thead>
+        <tbody id="skills-appendix-body">
+            <!-- Populated via JS or mirrors main skills -->
+        </tbody>
+    </table>
+</div>
+
+
 <script>
     function switchTab(evt, tabId) {
         document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
@@ -1720,13 +1875,20 @@
     }
 
     function calculateModifier(statKey) {
-        const enhancedVal = parseInt(document.getElementById(`${statKey}-enhanced`).value) || 0;
-        const modValue = getModifier(enhancedVal);
+        const baseVal = parseInt(document.getElementById(`${statKey}-unenhanced`).value) || 0;
+        const enhVal = parseInt(document.getElementById(`${statKey}-enhanced`).value) || 0;
         
+        // 1. Calculate combined total
+        const totalVal = baseVal + enhVal;
+        document.getElementById(`${statKey}-total`).value = totalVal;
+
+        // 2. Derive modifier from total value
+        const modValue = getModifier(totalVal);
         document.getElementById(`${statKey}-mod`).value = modValue;
         
+        // 3. Set Max Mana based on Intelligence Total
         if (statKey === 'int') {
-            document.getElementById('mana-max').value = enhancedVal;
+            document.getElementById('mana-max').value = totalVal;
         }
 
         if (statKey === 'dex') {
@@ -2279,26 +2441,41 @@
     });
 
     window.addEventListener('beforeprint', () => {
-        document.querySelectorAll('tr.skill-notes-row').forEach(row => {
-            // Force container display block
-            row.style.setProperty('display', 'block', 'important');
-            
-            const cell = row.querySelector('td');
-            if (cell) {
-                cell.style.setProperty('display', 'block', 'important');
-                cell.style.setProperty('width', '100%', 'important');
-            }
+        const appendixBody = document.getElementById('skills-appendix-body');
+        if (!appendixBody) return;
+        
+        appendixBody.innerHTML = ''; // Clear prior print passes
 
-            const textarea = row.querySelector('textarea.skill-notes');
-            if (textarea) {
-                // Force textarea width
-                textarea.style.setProperty('width', '100%', 'important');
-                textarea.style.setProperty('display', 'block', 'important');
-                
-                // Expand height to fit scroll content exactly
-                textarea.style.height = 'auto';
-                textarea.style.height = Math.max(60, textarea.scrollHeight + 10) + 'px';
+        const skillEntries = [];
+
+        // Collect skills that contain note text
+        document.querySelectorAll('#skills-body tr:not(.skill-notes-row)').forEach(row => {
+            const nameInput = row.querySelector('.skill-name');
+            const skillName = nameInput ? nameInput.value.trim() : '';
+            
+            const notesRow = row.nextElementSibling;
+            const notesTextarea = notesRow ? notesRow.querySelector('.skill-notes') : null;
+            const notesText = notesTextarea ? notesTextarea.value.trim() : '';
+
+            if (skillName && notesText) {
+                skillEntries.push({
+                    name: skillName,
+                    notes: notesText
+                });
             }
+        });
+
+        // Alphabetize entries by Skill Name
+        skillEntries.sort((a, b) => a.name.localeCompare(b.name, undefined, { sensitivity: 'base' }));
+
+        // Append sorted rows to the appendix table
+        skillEntries.forEach(entry => {
+            const appTr = document.createElement('tr');
+            appTr.innerHTML = `
+                <td style="font-weight: bold; width: 30%;">${entry.name}</td>
+                <td style="white-space: pre-wrap; width: 70%;">${entry.notes}</td>
+            `;
+            appendixBody.appendChild(appTr);
         });
     });
 
