@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- Version: v1.2.0 -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CarlRPG Character Editor</title>
@@ -80,7 +79,6 @@
             cursor: pointer;
         }
 
-        /* Page Layout Adjustments */
         .print-page {
             background-color: var(--panel-bg);
             border: 1px solid var(--border-color);
@@ -245,7 +243,6 @@
             text-shadow: 0 0 2px rgba(255,255,255,0.8);
         }
 
-        /* Ultra Condensed Crawler Grid layout */
         .crawler-condensed-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -417,7 +414,65 @@
             border-radius: 4px;
         }
 
+        .btn-delete-x {
+            background: #ea2027;
+            color: #fff;
+            border: none;
+            width: 28px;
+            height: 28px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 1rem;
+            line-height: 1;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            transition: background 0.2s;
+        }
+
+        .btn-delete-x:hover {
+            background: #ff4757;
+        }
+
+        .btn-icon-note {
+            background: #252a31;
+            color: var(--accent-color);
+            border: 1px solid var(--border-color);
+            width: 28px;
+            height: 28px;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            margin-right: 4px;
+        }
+
+        .btn-icon-note:hover {
+            background: var(--accent-color);
+            color: #fff;
+        }
+
+        .btn-mobile-note {
+            display: none;
+            background: #2ed573;
+            color: #000;
+            font-weight: bold;
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 6px;
+            font-size: 0.85rem;
+        }
+
         @media print {
+            
             body {
                 background-color: #ffffff !important;
                 color: #000000 !important;
@@ -439,7 +494,7 @@
                 width: 100%;
             }
 
-            header, .io-buttons, .tab-menu, button, .btn-file-input, td button, .hp-arrow-btn {
+            header, .io-buttons, .tab-menu, button, .btn-file-input, td button, .hp-arrow-btn, .btn-mobile-note {
                 display: none !important;
             }
 
@@ -459,11 +514,17 @@
                 margin-top: 0;
             }
 
+
             .tab-content {
                 display: block !important;
                 border: none !important;
                 padding: 0 !important;
                 background: transparent !important;
+            }
+
+            #tab-skills,
+            .tab-content {
+                display: block !important;
             }
 
             input[type="text"], input[type="number"], select, textarea {
@@ -553,12 +614,27 @@
                 margin: 8px 0 !important;
             }
 
-            /* Force all hidden skill note rows to show when printing */
-            .skill-notes-row {
+            /* Force all skill note rows and textareas to display during printing */
+            tr.skill-notes-row {
                 display: table-row !important;
             }
-             
-            /* Allow Page 2 (Attacks) and Page 3 (Gear) to sit on one single print page */
+
+            tr.skill-notes-row td {
+                display: table-cell !important;
+            }
+
+            .skill-notes {
+                display: block !important;
+                visibility: visible !important;
+                opacity: 1 !important;
+                height: auto !important;
+                min-height: 40px !important;
+                border: 1px solid #666 !important;
+                background: transparent !important;
+                color: #000 !important;
+                resize: none !important;
+            }
+
             #page-2, #page-3 {
                 page-break-before: auto !important;
                 break-before: auto !important;
@@ -567,7 +643,6 @@
                 margin-bottom: 15px !important;
             }
 
-            /* Wrapper container for combined Attacks + Gear printing */
             .attacks-gear-print-container {
                 page-break-before: always !important;
                 break-before: page !important;
@@ -575,7 +650,6 @@
                 break-inside: avoid !important;
             }
 
-            /* Force each dynamic Pet card to break onto its own standalone printed page */
             .pet-card {
                 page-break-before: always !important;
                 break-before: page !important;
@@ -592,20 +666,74 @@
                 border: 1px solid #000 !important;
             }
 
-        /* Hide version footer and modal when printing */
-            .version-footer, .modal-overlay {
+            .version-footer, .modal-overlay, .mobile-modal {
                 display: none !important;
             }
 
-        }
-
-        @media (max-width: 768px) {
-            .grid-layout-2col, .grid-layout-attacks, .bio-grid {
-                grid-template-columns: 1fr;
+            .skill-note,
+            .skill-notes,
+            .skill-description,
+            [data-skill-note] {
+                display: block !important;
+                visibility: visible !important;
+                opacity: 1 !important;
+                height: auto !important;
+                overflow: visible !important;
             }
+
+            /* Print target fallback for export/PDF */
+            .obsidian-print .skill-note,
+            .obsidian-print .skill-notes,
+            .obsidian-print .skill-description {
+            display: block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            }
+            
+            tr.skill-notes-row,
+            tr.skill-notes-row[style] {
+                display: block !important;
+                visibility: visible !important;
+                width: 100% !important;
+                clear: both !important;
+                float: none !important;
+            }
+
+            /* 2. Force the td inside to expand to 100% full width */
+            tr.skill-notes-row > td {
+                display: block !important;
+                visibility: visible !important;
+                width: 100% !important;
+                max-width: 100% !important;
+                box-sizing: border-box !important;
+                padding: 4px 0 !important;
+            }
+
+            /* 3. Force the textarea to fill 100% width and display expanded text */
+            textarea.skill-notes {
+                display: block !important;
+                visibility: visible !important;
+                opacity: 1 !important;
+                width: 100% !important;
+                min-width: 100% !important;
+                box-sizing: border-box !important;
+                
+                /* Layout & Height */
+                height: auto !important;
+                min-height: 60px !important;
+                overflow: visible !important;
+                white-space: pre-wrap !important;
+                word-break: break-word !important;
+                
+                /* Styling */
+                border: 1px solid #000 !important;
+                background: #fff !important;
+                color: #000 !important;
+                padding: 6px !important;
+            }
+
         }
 
-        /* Version Info Footer & Modal */
         .version-footer {
             text-align: center;
             margin-top: 30px;
@@ -625,7 +753,6 @@
             color: #ff6b81;
         }
 
-        /* Modal Overlay */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -666,14 +793,376 @@
         .modal-close-btn:hover {
             color: #ff6b81;
         }
+
+        .mobile-menu-toggle {
+            display: none;
+            background-color: var(--accent-color);
+            color: white;
+            font-size: 1.2rem;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .mobile-drawer {
+            position: fixed;
+            top: 0;
+            left: -280px;
+            width: 260px;
+            height: 100%;
+            background-color: var(--panel-bg);
+            border-right: 2px solid var(--accent-color);
+            z-index: 10000;
+            transition: left 0.3s ease;
+            overflow-y: auto;
+            padding: 20px 10px;
+            box-sizing: border-box;
+        }
+
+        .mobile-drawer.open {
+            left: 0;
+        }
+
+        .mobile-drawer-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 9999;
+        }
+
+        .mobile-drawer-overlay.active {
+            display: block;
+        }
+
+        .mobile-nav-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .mobile-nav-list button {
+            width: 100%;
+            text-align: left;
+            background: transparent;
+            color: var(--text-color);
+            border-bottom: 1px solid var(--border-color);
+            border-radius: 0;
+            padding: 12px 10px;
+        }
+
+        .mobile-nav-list button:hover,
+        .mobile-nav-list button.active {
+            background-color: var(--accent-color);
+            color: #fff;
+        }
+
+        .mobile-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 20000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 15px;
+            box-sizing: border-box;
+        }
+
+        .mobile-modal-content {
+            background: var(--panel-bg);
+            border: 2px solid var(--accent-color);
+            border-radius: 8px;
+            width: 100%;
+            max-width: 500px;
+            padding: 15px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .mobile-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .mobile-modal-header h3 {
+            margin: 0;
+            font-size: 1.1rem;
+            color: var(--text-color);
+        }
+
+        #modal-skill-textarea {
+            width: 100%;
+            box-sizing: border-box;
+            background: #000;
+            color: #fff;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 10px;
+            font-size: 1rem;
+            resize: vertical;
+        }
+
+        .modal-save-btn {
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 4px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        /* --- MOBILE SPECIFIC OVERRIDES (<768px) --- */
+        @media (max-width: 768px) {
+            .mobile-menu-toggle {
+                display: block;
+            }
+
+            .io-buttons, .tab-menu {
+                display: none !important;
+            }
+
+            body {
+                padding: 10px;
+            }
+
+            header {
+                border-bottom: 2px solid var(--accent-color);
+                padding-bottom: 8px;
+                margin-bottom: 15px;
+            }
+
+            header h1, .io-buttons {
+                display: none !important;
+            }
+
+            #sec-io button {
+                width: 100%;
+                box-sizing: border-box;
+            }
+
+            .grid-layout-2col, 
+            .grid-layout-attacks, 
+            .bio-grid, 
+            .crawler-condensed-grid,
+            .basic-info-grid {
+                grid-template-columns: 1fr !important;
+            }
+
+            .crawler-row-fluid {
+                grid-template-columns: 1fr 1fr !important;
+            }
+
+            /* Health bar: 5 boxes per row (2 rows) on mobile */
+            .hp-bar-track {
+                display: grid !important;
+                grid-template-columns: repeat(5, 1fr) !important;
+                gap: 6px !important;
+            }
+
+            .hp-slot-container {
+                width: 100%;
+            }
+
+            /* Attack Card Transformation */
+            #attacks-table, #attacks-table tbody, #attacks-table tr, #attacks-table td {
+                display: block;
+                width: 100%;
+                box-sizing: border-box;
+            }
+
+            #attacks-table thead {
+                display: none;
+            }
+
+            #attacks-table tr {
+                position: relative;
+                background: rgba(0,0,0,0.25);
+                border: 1px solid var(--border-color);
+                border-radius: 6px;
+                padding: 10px;
+                margin-bottom: 12px;
+            }
+
+            #attacks-table td {
+                border: none;
+                padding: 4px 0;
+            }
+
+            #attacks-table td::before {
+                content: attr(data-label);
+                font-size: 0.75rem;
+                font-weight: bold;
+                color: var(--accent-color);
+                display: block;
+                margin-bottom: 2px;
+            }
+
+            #attacks-table td.td-action {
+                position: absolute;
+                top: 8px;
+                right: 8px;
+                width: auto;
+                padding: 0;
+            }
+
+            #attacks-table td.td-action::before {
+                display: none;
+            }
+
+            /* Skills Mobile Cards Transformation */
+            #skills-table, #skills-table tbody, #skills-table tr, #skills-table td {
+                display: block;
+                width: 100%;
+                box-sizing: border-box;
+            }
+
+            #skills-table thead {
+                display: none;
+            }
+
+            #skills-table tr:not(.skill-notes-row) {
+                position: relative;
+                background: rgba(0, 0, 0, 0.25);
+                border: 1px solid var(--border-color);
+                border-radius: 6px;
+                padding: 10px;
+                margin-top: 12px;
+            }
+
+            #skills-table tr.skill-notes-row {
+                display: none !important; /* Hide inline note text area on phone view */
+            }
+
+            #skills-table td {
+                border: none;
+                padding: 4px 0;
+            }
+
+            #skills-table td::before {
+                content: attr(data-label);
+                font-size: 0.75rem;
+                font-weight: bold;
+                color: var(--accent-color);
+                display: block;
+                margin-bottom: 2px;
+            }
+
+            #skills-table td.td-skill-del {
+                position: absolute;
+                top: 8px;
+                right: 8px;
+                width: auto;
+                padding: 0;
+            }
+
+            #skills-table td.td-skill-del::before {
+                display: none;
+            }
+
+            #skills-table td.td-skill-note {
+                padding-top: 6px;
+            }
+
+            .btn-mobile-note {
+                display: block;
+            }
+
+            .btn-icon-note {
+                display: none;
+            }
+
+            /* Inventory Cards */
+            #inventory-table, #inventory-table tbody, #inventory-table tr, #inventory-table td {
+                display: block;
+                width: 100%;
+                box-sizing: border-box;
+            }
+
+            #inventory-table thead {
+                display: none;
+            }
+
+            #inventory-table tr {
+                background: rgba(0, 0, 0, 0.25);
+                border: 1px solid var(--border-color);
+                border-radius: 6px;
+                padding: 10px;
+                margin-bottom: 12px;
+            }
+
+            #inventory-table td {
+                border: none;
+                padding: 4px 0;
+            }
+
+            #inventory-table td::before {
+                content: attr(data-label);
+                font-size: 0.75rem;
+                font-weight: bold;
+                color: var(--accent-color);
+                display: block;
+                margin-bottom: 2px;
+            }
+
+            .pet-card .basic-info-grid {
+                grid-template-columns: 1fr 1fr !important;
+            }
+
+            .pet-card div[style*="repeat(5, 1fr)"] {
+                grid-template-columns: repeat(3, 1fr) !important;
+            }
+
+            .pet-hp-bar-track {
+                display: grid !important;
+                grid-template-columns: repeat(5, 1fr) !important;
+                gap: 6px !important;
+            }
+        }
     </style>
 </head>
 <body>
 
+<!-- Mobile Drawer Overlay & Menu -->
+<div id="mobile-drawer-overlay" class="mobile-drawer-overlay" onclick="toggleMobileDrawer()"></div>
+
+<div id="mobile-drawer" class="mobile-drawer">
+    <h3 style="margin-bottom: 15px;">Navigation</h3>
+    <ul class="mobile-nav-list">
+        <li><button onclick="switchMobileSection('sec-io')">💾 Save / Load File</button></li>
+        <li><button onclick="switchMobileSection('page-1')">👤 Core Profile</button></li>
+        <li><button onclick="switchMobileSection('page-2')">⚔️ Attacks & Hotlist</button></li>
+        <li><button onclick="switchMobileSection('page-3')">🛡️ Gear & Accessories</button></li>
+        <li><button onclick="switchMobileSection('tab-skills')">📜 Skills</button></li>
+        <li><button onclick="switchMobileSection('tab-inventory')">🎒 Inventory</button></li>
+        <li><button onclick="switchMobileSection('tab-pets')">🐾 Pets</button></li>
+        <li><button onclick="switchMobileSection('tab-raceclass')">👑 Class / Race</button></li>
+        <li><button onclick="switchMobileSection('tab-crawlers')">🤝 Social / Crawlers</button></li>
+        <li><button onclick="switchMobileSection('tab-story')">📖 Narrative Log</button></li>
+        <li><button onclick="switchMobileSection('tab-bio-origins')">🌄 Background</button></li>
+        <li><button onclick="switchMobileSection('tab-bio-psych')">🧠 Psych Profile</button></li>
+        <li><button onclick="switchMobileSection('tab-personal-space')">🏠 Personal Space</button></li>
+        <li><button onclick="switchMobileSection('tab-notes')">📝 Notes</button></li>
+    </ul>
+</div>
+
 <div class="container">
     <header>
         <div>
-            <h1>Dungeon Crawler Carl - Character Profile</h1>
+            <button class="mobile-menu-toggle" onclick="toggleMobileDrawer()">☰ Menu</button>
+            <h1 style="font-size: 1.2rem; margin: 0;">DCC Character Profile</h1>
         </div>
         <div class="io-buttons">
             <button onclick="exportCharacter()">Save Character (JSON)</button>
@@ -686,7 +1175,28 @@
 
     <form id="character-form" onsubmit="event.preventDefault();">
         
-        <!-- PAGE 1: CRAWLER, ATTRIBUTES, DEFENSES & EXTERNAL BUFFS -->
+        <!-- SAVE / LOAD SECTION (DEFAULT MOBILE VIEW) -->
+        <div class="print-page" id="sec-io" style="display: none;">
+            <h2>DCC Character Management</h2>
+            <p style="font-size: 0.9rem; color: #aaa; margin-bottom: 20px;">
+                Load an existing character JSON file or save your current character configuration.
+            </p>
+
+            <div style="display: flex; flex-direction: column; gap: 15px; max-width: 400px; margin: 0 auto; padding: 20px 0;">
+                <button type="button" onclick="exportCharacter()" style="padding: 15px; font-size: 1rem;">
+                    💾 Save Character (JSON)
+                </button>
+
+                <div class="file-input-wrapper" style="width: 100%;">
+                    <button type="button" class="btn-file-input" style="width: 100%; padding: 15px; font-size: 1rem;">
+                        📂 Load Character (JSON)
+                    </button>
+                    <input type="file" id="file-loader-mobile" accept=".json" onchange="importCharacter(event)" style="width: 100%; height: 100%;" />
+                </div>
+            </div>
+        </div>
+
+        <!-- PAGE 1: CRAWLER CORE PROFILE -->
         <div class="print-page" id="page-1">
             <h2>Character Core Profile</h2>
 
@@ -747,7 +1257,6 @@
             </div>
 
             <div class="grid-layout-2col">
-                <!-- Left Section: Crawler Info -->
                 <div>
                     <h3>Crawler</h3>
                     <div class="crawler-condensed-grid">
@@ -787,11 +1296,9 @@
                     </div>
                 </div>
 
-                <!-- Right Section: Attributes & Defenses -->
                 <div>
                     <h3>Attributes</h3>
                     
-                    <!-- MANA SECTION -->
                     <div class="mana-row-v2">
                         <div>
                             <label>Max Mana</label>
@@ -890,7 +1397,7 @@
                         <div class="table-responsive">
                             <table id="attacks-table">
                                 <thead>
-                                    <tr><th>Name</th><th>To Hit</th><th>Damage</th><th>Effects</th><th style="width:40px;"></th></tr>
+                                    <tr><th>Name</th><th>To Hit</th><th>Damage</th><th>Effects</th><th style="width:30px; text-align:center;"></th></tr>
                                 </thead>
                                 <tbody id="attacks-body"></tbody>
                             </table>
@@ -943,10 +1450,7 @@
             <div id="tab-skills" class="tab-content active">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                     <h2>Skills & Character Adjustments</h2>
-                    <div>
-                        <button type="button" onclick="toggleAllSkillNotes()" style="margin-right: 8px; background-color: #383e46;">Expand / Collapse All Notes</button>
-                        <button type="button" onclick="addSkillRow()">+ Add New Skill</button>
-                    </div>
+                    <button type="button" onclick="addSkillRow()">+ Add New Skill</button>
                 </div>
                 <div class="table-responsive">
                     <table id="skills-table">
@@ -956,8 +1460,8 @@
                                 <th style="width:15%;">Rank</th>
                                 <th style="width:25%;">Stat & Mod</th>
                                 <th style="width:20%;">Check Type</th>
-                                <th style="width:70px; text-align:center;">Notes</th>
-                                <th style="width:40px;"></th>
+                                <th style="width:70px; text-align:center;">NOTE</th>
+                                <th style="width:30px; text-align:center;"></th>
                             </tr>
                         </thead>
                         <tbody id="skills-body"></tbody>
@@ -1113,7 +1617,6 @@
                 </div>
                 <div id="pets-container"></div>
             </div>
-            
 
             <!-- TAB 9: GENERAL NOTES -->
             <div id="tab-notes" class="tab-content">
@@ -1126,12 +1629,10 @@
 
     </form>
 
-        <!-- Footer Link (Screen-only) -->
     <div class="version-footer">
         <span>DCC Character Sheet — </span>
         <span class="version-link" onclick="openVersionModal()">Version Info</span>
     </div>
-
 
     <!-- Version Modal Popup -->
     <div id="version-modal" class="modal-overlay" onclick="closeVersionModalOnOverlay(event)">
@@ -1139,9 +1640,17 @@
             <button type="button" class="modal-close-btn" onclick="closeVersionModal()">&times;</button>
             <h3 style="margin-top: 0; border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">Sheet Version Information</h3>
             
-            <p><strong>Version:</strong> v1.2.0</p>
+            <p><strong>Version:</strong> v2.0.0</p>
             <p><strong>Changelog:</strong></p>
             <ul style="padding-left: 20px; font-size: 0.9rem; line-height: 1.4;">
+                <li>
+                    <strong>v2.0.0:</strong>
+                    <ol>
+                        <li>Updated UI for mobile devices with responsive card views and custom drawer navigation.</li>
+                        <li>Restored red X buttons for Attacks/Skills with mobile corner-positioning.</li>
+                        <li>Restored textarea skill notes with desktop toggle & mobile editor modal.</li>
+                    </ol>
+                </li>
                 <li>
                     <strong>v1.2.0:</strong>
                     <ol>
@@ -1171,14 +1680,24 @@
                 <li>
                     <strong>v0.0.0:</strong> Draft, Built based upon released Character PDF.
                 </li>
-                
             </ul>
         </div>
     </div>
 </div>
 
+<!-- MOBILE SKILL NOTES MODAL -->
+<div id="mobile-notes-modal" class="mobile-modal" style="display: none;">
+    <div class="mobile-modal-content">
+        <div class="mobile-modal-header">
+            <h3 id="modal-skill-title">Skill Notes</h3>
+            <button type="button" class="modal-close-btn" onclick="closeSkillNotesModal()">✕</button>
+        </div>
+        <textarea id="modal-skill-textarea" rows="8" placeholder="Type skill details, conditions, or rules here..."></textarea>
+        <button type="button" class="modal-save-btn" onclick="saveSkillNotesModal()">Done</button>
+    </div>
+</div>
+
 <script>
-    // Tab switching engine
     function switchTab(evt, tabId) {
         document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
         document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
@@ -1186,7 +1705,6 @@
         evt.currentTarget.classList.add('active');
     }
 
-    // Mathematical Modifiers Calculator
     function getModifier(value) {
         if (value >= 300) return 10;
         if (value >= 200) return 9;
@@ -1231,7 +1749,6 @@
         document.getElementById('dr-total').value = armorDR + drBuffs;
     }
 
-    /* --- HEALTH TRACKER FUNCTIONS --- */
     function adjustHealth(amount) {
         const slots = document.querySelectorAll('.hp-slot-box');
         let activeCount = 0;
@@ -1260,89 +1777,119 @@
         }
     }
 
-    // Dynamic Element Row Injectors
     function addAttackRow(data = {name: '', to_hit: '', damage: '', effects: ''}) {
         const tbody = document.getElementById('attacks-body');
         const tr = document.createElement('tr');
         tr.innerHTML = `
-            <td><input type="text" class="attack-name" value="${data.name}"></td>
-            <td><input type="text" class="attack-to-hit" value="${data.to_hit}"></td>
-            <td><input type="text" class="attack-damage" value="${data.damage}"></td>
-            <td><input type="text" class="attack-effects" value="${data.effects}"></td>
-            <td style="text-align:center;"><button type="button" style="background:#ea2027; padding: 4px 8px;" onclick="this.closest('tr').remove()">X</button></td>
+            <td data-label="Name"><input type="text" class="attack-name" value="${data.name}"></td>
+            <td data-label="To Hit"><input type="text" class="attack-to-hit" value="${data.to_hit}"></td>
+            <td data-label="Damage"><input type="text" class="attack-damage" value="${data.damage}"></td>
+            <td data-label="Effects"><input type="text" class="attack-effects" value="${data.effects}"></td>
+            <td class="td-action" style="text-align:center;">
+                <button type="button" class="btn-delete-x" onclick="this.closest('tr').remove()" title="Delete Attack">✕</button>
+            </td>
         `;
         tbody.appendChild(tr);
     }
 
-    function addSkillRow(data = {name: '', rank: '', stat: '', check: '', notes: ''}) {
+    let currentEditingNotesTextarea = null;
+
+    function addSkillRow(data = { name: '', rank: '', stat: '', check: '', notes: '' }) {
         const tbody = document.getElementById('skills-body');
         
-        // Main skill attributes row
-        const tr1 = document.createElement('tr');
-        tr1.innerHTML = `
-            <td><input type="text" class="skill-name" value="${data.name}"></td>
-            <td><input type="text" class="skill-rank" value="${data.rank}"></td>
-            <td><input type="text" class="skill-stat" value="${data.stat}"></td>
-            <td><input type="text" class="skill-check" value="${data.check}"></td>
-            <td style="text-align:center;">
-                <button type="button" class="btn-toggle-notes" style="background:#252a31; color:var(--accent-color); border:1px solid var(--border-color); padding: 4px 8px; font-size:0.8rem;" onclick="toggleSkillNotes(this)">▼ Notes</button>
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td data-label="Skill Name"><input type="text" class="skill-name" value="${data.name || ''}"></td>
+            <td data-label="Rank"><input type="text" class="skill-rank" value="${data.rank || ''}"></td>
+            <td data-label="Stat Modifier"><input type="text" class="skill-stat" value="${data.stat || ''}"></td>
+            <td data-label="Check Total"><input type="text" class="skill-check" value="${data.check || ''}"></td>
+            <td class="td-skill-note" data-label="Note" style="text-align:center;">
+                <button type="button" class="btn-icon-note" onclick="toggleDesktopSkillNote(this)" title="Toggle Note Area">✏️</button>
+                <button type="button" class="btn-mobile-note" onclick="openSkillNotesModal(this)">View / Edit Note</button>
             </td>
-            <td style="text-align:center;">
-                <button type="button" style="background:#ea2027; padding: 4px 8px;" onclick="removeSkillEntry(this)">X</button>
-            </td>
-        `;
-        
-        // Collapsible notes row (hidden by default)
-        const tr2 = document.createElement('tr');
-        tr2.className = 'skill-notes-row';
-        tr2.style.display = 'none'; // Hidden initially
-        tr2.innerHTML = `
-            <td colspan="6" style="padding: 6px 10px; background: rgba(0,0,0,0.2);">
-                <label style="font-size: 0.75rem; color: #aaa; display: block; margin-bottom: 2px;">Notes & Upgrades</label>
-                <textarea class="skill-notes" rows="3" style="width: 100%; resize: vertical;">${data.notes}</textarea>
+            <td class="td-skill-del" style="text-align:center;">
+                <button type="button" class="btn-delete-x" onclick="removeSkillRow(this)" title="Delete Skill">✕</button>
             </td>
         `;
         
-        tbody.appendChild(tr1);
-        tbody.appendChild(tr2);
+        const trNotes = document.createElement('tr');
+        trNotes.className = 'skill-notes-row';
+        trNotes.style.display = 'none';
+        trNotes.innerHTML = `
+            <td colspan="6" data-label="Skill Notes">
+                <textarea class="skill-notes" rows="3" placeholder="Skill details, conditions, or rules...">${data.notes || ''}</textarea>
+            </td>
+        `;
+
+        tbody.appendChild(tr);
+        tbody.appendChild(trNotes);
     }
 
-    // Toggle visibility of the notes row
-    function toggleSkillNotes(button) {
-        const mainRow = button.closest('tr');
+    function toggleDesktopSkillNote(btn) {
+        const mainRow = btn.closest('tr');
         const notesRow = mainRow.nextElementSibling;
-        
-        if (notesRow.style.display === 'none') {
+        if (!notesRow) return;
+
+        if (notesRow.style.display === 'none' || getComputedStyle(notesRow).display === 'none') {
             notesRow.style.display = 'table-row';
-            button.textContent = '▲ Notes';
-            button.style.backgroundColor = 'var(--accent-color)';
-            button.style.color = '#fff';
+            btn.style.backgroundColor = 'var(--accent-color)';
+            btn.style.color = '#fff';
         } else {
             notesRow.style.display = 'none';
-            button.textContent = '▼ Notes';
-            button.style.backgroundColor = '#252a31';
-            button.style.color = 'var(--accent-color)';
+            btn.style.backgroundColor = '#252a31';
+            btn.style.color = 'var(--accent-color)';
         }
     }
 
-    // Remove both skill row and its associated notes row
-    function removeSkillEntry(button) {
-        const mainRow = button.closest('tr');
+    function openSkillNotesModal(btn) {
+        const mainRow = btn.closest('tr');
+        const skillNameInput = mainRow.querySelector('.skill-name');
         const notesRow = mainRow.nextElementSibling;
-        mainRow.remove();
+        const notesTextarea = notesRow ? notesRow.querySelector('.skill-notes') : null;
+
+        if (!notesTextarea) return;
+
+        currentEditingNotesTextarea = notesTextarea;
+        
+        const skillName = skillNameInput && skillNameInput.value ? skillNameInput.value : 'Skill';
+        document.getElementById('modal-skill-title').innerText = `${skillName} - Notes`;
+        document.getElementById('modal-skill-textarea').value = notesTextarea.value || '';
+        
+        document.getElementById('mobile-notes-modal').style.display = 'flex';
+    }
+
+    function saveSkillNotesModal() {
+        if (currentEditingNotesTextarea) {
+            const modalText = document.getElementById('modal-skill-textarea').value;
+            currentEditingNotesTextarea.value = modalText;
+        }
+        closeSkillNotesModal();
+    }
+
+    function closeSkillNotesModal() {
+        document.getElementById('mobile-notes-modal').style.display = 'none';
+        currentEditingNotesTextarea = null;
+    }
+
+    function removeSkillRow(btn) {
+        const mainRow = btn.closest('tr');
+        const notesRow = mainRow.nextElementSibling;
         if (notesRow && notesRow.classList.contains('skill-notes-row')) {
             notesRow.remove();
         }
+        mainRow.remove();
     }
 
-    function addInventoryRow(data = {name: '', qty: '1', notes: ''}) {
+    function addInventoryRow(data = { name: '', qty: '', notes: '' }) {
         const tbody = document.getElementById('inventory-body');
         const tr = document.createElement('tr');
         tr.innerHTML = `
-            <td><input type="text" class="inv-name" value="${data.name}"></td>
-            <td><input type="text" class="inv-qty" value="${data.qty}"></td>
-            <td><input type="text" class="inv-notes" value="${data.notes}"></td>
-            <td style="text-align:center;"><button type="button" style="background:#ea2027; padding: 4px 8px;" onclick="this.closest('tr').remove()">X</button></td>
+            <td data-label="Item Name"><input type="text" class="inv-name" value="${data.name || ''}"></td>
+            <td data-label="Quantity"><input type="text" class="inv-qty" value="${data.qty || ''}"></td>
+            <td data-label="Notes"><input type="text" class="inv-notes" value="${data.notes || ''}"></td>
+            <td style="text-align:center;">
+                <button type="button" class="btn-delete-x" onclick="this.closest('tr').remove()" title="Delete Item">✕</button>
+            </td>
         `;
         tbody.appendChild(tr);
     }
@@ -1389,16 +1936,11 @@
         }
     }
 
-
-    // Dynamic Pet Card Injector with Integrated Dynamic Health Bar
     function addPetCard(data = {}) {
         const container = document.getElementById('pets-container');
         const div = document.createElement('div');
         div.className = 'crawler-card pet-card';
         div.style.marginBottom = '20px';
-        
-        // Generate a unique ID suffix for this specific pet instance
-        const petId = 'pet-' + Date.now() + '-' + Math.floor(Math.random() * 1000);
         
         div.innerHTML = `
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--accent-color); padding-bottom: 5px; margin-bottom: 10px;">
@@ -1406,7 +1948,6 @@
                 <button type="button" style="background:#ea2027; padding: 4px 10px; font-size:0.8rem;" onclick="this.closest('.pet-card').remove()">Remove Pet</button>
             </div>
 
-            <!-- PET HEALTH BAR SECTION -->
             <div class="hp-section-container" style="margin-bottom: 15px;">
                 <div class="hp-header-info">
                     <span>PET HEALTH TRACKER</span>
@@ -1415,9 +1956,7 @@
                 <div class="hp-bar-wrapper">
                     <button type="button" class="hp-arrow-btn" onclick="adjustPetHealth(this, -1)" title="Mark 1 Health Slot Lost">◄</button>
                     
-                    <div class="hp-bar-track pet-hp-bar-track">
-                        <!-- Dynamic Health Slots injected via JS -->
-                    </div>
+                    <div class="hp-bar-track pet-hp-bar-track"></div>
 
                     <button type="button" class="hp-arrow-btn" onclick="adjustPetHealth(this, 1)" title="Restore 1 Health Slot">►</button>
                 </div>
@@ -1453,17 +1992,14 @@
         
         container.appendChild(div);
 
-        // Initialize the health bar track for this specific pet card
         const hpInput = div.querySelector('.pet-hp-slots');
         updatePetHealthSlots(hpInput, data.lost_slots || 0);
     }
 
-    // Render Health Slots dynamically based on the 'Health Slots' input value
     function updatePetHealthSlots(inputEl, lostSlotsCount = 0) {
         const petCard = inputEl.closest('.pet-card');
         let maxSlots = parseInt(inputEl.value) || 1;
         
-        // Enforce range between 1 and 10 slots
         if (maxSlots > 10) maxSlots = 10;
         if (maxSlots < 1) maxSlots = 1;
         inputEl.value = maxSlots;
@@ -1471,7 +2007,6 @@
         petCard.querySelector('.pet-hp-slot-count-display').textContent = maxSlots;
         const track = petCard.querySelector('.pet-hp-bar-track');
         
-        // Preserve current lost slot states if re-rendering via input
         const existingLost = petCard.querySelectorAll('.hp-slot-box.lost').length;
         const lostCount = lostSlotsCount || existingLost;
 
@@ -1497,7 +2032,6 @@
         }
     }
 
-    // Handle Pet Health increment / decrement arrows
     function adjustPetHealth(btnEl, delta) {
         const petCard = btnEl.closest('.pet-card');
         const slots = petCard.querySelectorAll('.hp-slot-box');
@@ -1529,37 +2063,6 @@
     addInventoryRow();
     ['str', 'int', 'con', 'dex', 'cha'].forEach(calculateModifier);
 
-    function toggleAllSkillNotes() {
-        const notesRows = document.querySelectorAll('#skills-body .skill-notes-row');
-        if (notesRows.length === 0) return;
-
-        // Check if at least one row is currently hidden
-        const hasHidden = Array.from(notesRows).some(row => row.style.display === 'none' || getComputedStyle(row).display === 'none');
-
-        notesRows.forEach(notesRow => {
-            const mainRow = notesRow.previousElementSibling;
-            const btn = mainRow ? mainRow.querySelector('.btn-toggle-notes') : null;
-
-            if (hasHidden) {
-                notesRow.style.display = 'table-row';
-                if (btn) {
-                    btn.textContent = '▲ Notes';
-                    btn.style.backgroundColor = 'var(--accent-color)';
-                    btn.style.color = '#fff';
-                }
-            } else {
-                notesRow.style.display = 'none';
-                if (btn) {
-                    btn.textContent = '▼ Notes';
-                    btn.style.backgroundColor = '#252a31';
-                    btn.style.color = 'var(--accent-color)';
-                }
-            }
-        });
-    }
-
-    // EXPORT ENGINE
-    // EXPORT ENGINE (With 'Save As' Dialog Support)
     async function exportCharacter() {
         const form = document.getElementById('character-form');
         const formData = new FormData(form);
@@ -1621,7 +2124,7 @@
                 level: card.querySelector('.pet-level').value,
                 size: card.querySelector('.pet-size').value,
                 hp_slots: card.querySelector('.pet-hp-slots').value,
-                lost_slots: card.querySelectorAll('.hp-slot-box.lost').length, // Saves active health state
+                lost_slots: card.querySelectorAll('.hp-slot-box.lost').length,
                 speed: card.querySelector('.pet-speed').value,
                 evade: card.querySelector('.pet-evade').value,
                 dr: card.querySelector('.pet-dr').value,
@@ -1646,7 +2149,6 @@
         const jsonString = JSON.stringify(characterObj, null, 2);
         const fileName = (characterObj.name ? characterObj.name.replace(/\s+/g, '_') : 'crawler') + '_sheet.json';
 
-        // 1. Try File System Access API (triggers native Save As dialog)
         if ('showSaveFilePicker' in window) {
             try {
                 const handle = await window.showSaveFilePicker({
@@ -1661,13 +2163,11 @@
                 await writable.close();
                 return;
             } catch (err) {
-                // User cancelled the prompt or permission was denied
                 if (err.name === 'AbortError') return;
                 console.warn('FilePicker error, falling back to blob download:', err);
             }
         }
 
-        // 2. Fallback for older/unsupported browsers (Firefox/Safari)
         const blob = new Blob([jsonString], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
         const downloadAnchor = document.createElement('a');
@@ -1679,7 +2179,6 @@
         URL.revokeObjectURL(url);
     }
 
-    // IMPORT ENGINE
     function importCharacter(event) {
         const file = event.target.files[0];
         if (!file) return;
@@ -1733,7 +2232,6 @@
         reader.readAsText(file);
     }
 
-    // Version Modal Handlers
     function openVersionModal() {
         document.getElementById('version-modal').style.display = 'flex';
     }
@@ -1742,12 +2240,75 @@
         document.getElementById('version-modal').style.display = 'none';
     }
 
-    // Close modal when clicking outside the modal box
     function closeVersionModalOnOverlay(event) {
         if (event.target.id === 'version-modal') {
             closeVersionModal();
         }
     }
+
+    function toggleMobileDrawer() {
+        const drawer = document.getElementById('mobile-drawer');
+        const overlay = document.getElementById('mobile-drawer-overlay');
+        drawer.classList.toggle('open');
+        overlay.classList.toggle('active');
+    }
+
+    function switchMobileSection(sectionId) {
+        document.querySelectorAll('.print-page, .tab-content').forEach(el => {
+            el.style.display = 'none';
+        });
+
+        const target = document.getElementById(sectionId);
+        if (target) {
+            target.style.display = 'block';
+        }
+
+        const drawer = document.getElementById('mobile-drawer');
+        const overlay = document.getElementById('mobile-drawer-overlay');
+        if (drawer && drawer.classList.contains('open')) {
+            drawer.classList.remove('open');
+            overlay.classList.remove('active');
+        }
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+        const isMobile = window.innerWidth <= 768;
+        if (isMobile) {
+            switchMobileSection('sec-io');
+        }
+    });
+
+    window.addEventListener('beforeprint', () => {
+        document.querySelectorAll('tr.skill-notes-row').forEach(row => {
+            // Force container display block
+            row.style.setProperty('display', 'block', 'important');
+            
+            const cell = row.querySelector('td');
+            if (cell) {
+                cell.style.setProperty('display', 'block', 'important');
+                cell.style.setProperty('width', '100%', 'important');
+            }
+
+            const textarea = row.querySelector('textarea.skill-notes');
+            if (textarea) {
+                // Force textarea width
+                textarea.style.setProperty('width', '100%', 'important');
+                textarea.style.setProperty('display', 'block', 'important');
+                
+                // Expand height to fit scroll content exactly
+                textarea.style.height = 'auto';
+                textarea.style.height = Math.max(60, textarea.scrollHeight + 10) + 'px';
+            }
+        });
+    });
+
+    window.addEventListener('afterprint', () => {
+        document.querySelectorAll('tr.skill-notes-row').forEach(row => {
+            if (!row.classList.contains('open') && !row.classList.contains('active')) {
+                row.style.display = 'none';
+            }
+        });
+    });
 </script>
 
 </body>
